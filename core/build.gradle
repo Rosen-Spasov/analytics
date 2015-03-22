@@ -1,6 +1,8 @@
 dependencies {
 	compile(group: 'org.apache.camel', name: 'camel-spring', version: '2.15.0')
+	compile(group: 'org.apache.camel', name: 'camel-twitter', version: '2.15.0')
 	compile(group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.2')
+	compile(group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.6.6')
 	
-	compile "com.aliasi:lingpipe:4.0.1"
+	compile(group: 'com.aliasi', name: 'lingpipe', version: '4.0.1')
 }
