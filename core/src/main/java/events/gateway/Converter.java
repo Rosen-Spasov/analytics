@@ -44,7 +44,7 @@ public class Converter implements Processor {
 		time.setTime(temp);
 		String timeStamp = "[" + time.get(Calendar.HOUR_OF_DAY) + ":" + time.get(Calendar.MINUTE) + ":"  + time.get(Calendar.SECOND) + "]";
 		
-		System.out.println(timeStamp + ":" + status.getId());
+		logger.info("Event " + timeStamp + ":" + status.getId());
 		
 		String username = status.getUser()!=null ? status.getUser().getScreenName() : "not available";
 		String url = status.getUser()!=null ? ("https://twitter.com/" + status.getUser().getId() +  "/status/" + status.getId()) : "https://www.twitter.com";

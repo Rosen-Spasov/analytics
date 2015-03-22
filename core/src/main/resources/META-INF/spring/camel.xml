@@ -4,44 +4,46 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<!-- <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-		<property name="brokerURL" value="tcp://localhost:61616"/>
-	</bean> -->
+	<!-- <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent"> 
+		<property name="brokerURL" value="tcp://localhost:61616"/> </bean> -->
 
-	<bean id="converter" class="events.gateway.Converter"/>
+	<bean id="converter" class="events.gateway.Converter" />
 
 	<camelContext id="defaultContext" xmlns="http://camel.apache.org/schema/spring" autoStartup="true">
-	
+
+		<endpoint id="eventsEndpoint" uri="vm:topic:twitterEvents?multipleConsumers=true" />
+		<endpoint id="eventsEndpointOld" uri="vm:topic:twitterEventsOld?multipleConsumers=true" />
+
 		<dataFormats>
-			<json id="json" library="Jackson"/>
+			<json id="json" library="Jackson" />
 		</dataFormats>
-		
+
 		<route>
-			<from uri="twitter://search/tweets?type=polling&amp;delay=5&amp;keywords=#starbucks&amp;accessToken=1388971128-mtMr4MeGxiDqSFIXJeucHTJkGSpIho2OdbzR7ti&amp;accessTokenSecret=beAuEN8mKODjScBAa98ChqpAEYbRUOEj9HCK34gApU6gX&amp;consumerKey=u6L44e32rSntCLYp83wMlhHX8&amp;consumerSecret=P9eZODZYYsHPAnvkuCqa62ffziBABBPfG3PskWSDqFZf5M9ZEo"/>
+			<from uri="twitter://search/tweets?type=polling&amp;delay=5&amp;keywords=#starbucks&amp;accessToken=1388971128-mtMr4MeGxiDqSFIXJeucHTJkGSpIho2OdbzR7ti&amp;accessTokenSecret=beAuEN8mKODjScBAa98ChqpAEYbRUOEj9HCK34gApU6gX&amp;consumerKey=u6L44e32rSntCLYp83wMlhHX8&amp;consumerSecret=P9eZODZYYsHPAnvkuCqa62ffziBABBPfG3PskWSDqFZf5M9ZEo" />
 			<process ref="converter" />
-			<marshal ref="json"/>
-			<to uri="vm:topic:twitterEvents"/>
+			<marshal ref="json" />
+			<to ref="eventsEndpoint" />
 		</route>
-	
+
 		<route>
-			<from uri="vm:topic:twitterEvents"/>
-			<to uri="websocket:cameltwitter?sendToAll=true&amp;port=8080&amp;staticResources=classpath:web/."/>
+			<from ref="eventsEndpoint" />
+			<to uri="websocket:cameltwitter?sendToAll=true&amp;port=8080&amp;staticResources=classpath:web/." />
 		</route>
-		
+
 		<route>
-			<from uri="vm:topic:twitterEvents"/>
-			<to uri="file://c:/twitterEvents"/>
+			<from ref="eventsEndpoint" />
+			<to uri="file://c:/twitterEvents" />
 		</route>
-		
+
 		<route>
 			<from uri="file://c:/twitterEvents" />
-			<to uri="vm:topic:twitterEventsOld"/>			
+			<to ref="eventsEndpointOld" />
 		</route>
-		
+
 		<route>
-			<from uri="vm:topic:twitterEventsOld"/>
-			<to uri="websocket:cameltwitter?sendToAll=true&amp;port=8080&amp;staticResources=classpath:web/."/>
+			<from ref="eventsEndpointOld" />
+			<to uri="websocket:cameltwitter?sendToAll=true&amp;port=8080&amp;staticResources=classpath:web/." />
 		</route>
-		
+
 	</camelContext>
 </beans>
