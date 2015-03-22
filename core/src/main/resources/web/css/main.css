@@ -1,17 +1,16 @@
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Fredoka One", "lucida grande", tahoma, sans-serif;
-  font-weight: 400;
-  letter-spacing: 0.03em;
-  line-height: 1.625em;
-  margin: 0;
-  /*color: #d0eb6a;*/
+	font-family: "Fredoka One", "lucida grande", tahoma, sans-serif;
+	font-weight: 400;
+	letter-spacing: 0.03em;
+	line-height: 1.625em;
+	margin: 0;
+	/*color: #d0eb6a;*/
 }
 
-
 h2 {
-  font-size: 24px;
-  line-height: 1.45em;
-  margin-bottom: 0.2em;
+	font-size: 24px;
+	line-height: 1.45em;
+	margin-bottom: 0.2em;
 }
 
 /*body {
@@ -19,35 +18,48 @@ h2 {
 } 
 */
 body, input, textarea {
-/*  color: white;
+	/*  color: white;
   text-shadow: 0 -1px 0 black;*/
-  font-size: 14px;
-  line-height: 1.625em;
-  font-family: "Open Sans", "lucida grande", tahoma, sans-serif;
-  font-weight: 300;
-  -webkit-font-smoothing: antialiased;
+	font-size: 14px;
+	line-height: 1.625em;
+	font-family: "Open Sans", "lucida grande", tahoma, sans-serif;
+	font-weight: 300;
+	-webkit-font-smoothing: antialiased;
 }
 
-
 .neu {
- background-color:#bbbbbb;
+	background-color: #bbbbbb;
 }
 
 .pos {
- background-color:#009900;
+	background-color: #009900;
 }
 
 .neg {
- background-color:#990000;
+	background-color: #990000;
 }
 
-.twittertable{
-  margin-top: 20px;
-  width:99%;
-  max-width:100%;
-  border-collapse:collapse
+.twittertable {
+	margin-top: 20px;
+	width: 99%;
+	max-width: 100%;
+	border-collapse: collapse
 }
 
-#map-canvas{
-  height: 500px;
+#map-canvas {
+	height: 500px;
+}
+
+table {
+	border-collapse: separate;
+	border-spacing: 5px;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+th, td {
+	padding: 1px;
 }
