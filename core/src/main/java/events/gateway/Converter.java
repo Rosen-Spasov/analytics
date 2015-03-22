@@ -1,7 +1,6 @@
 package events.gateway;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.regex.Matcher;
@@ -9,6 +8,8 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import twitter4j.Status;
 
@@ -21,6 +22,8 @@ import events.Tweet;
 @SuppressWarnings("rawtypes")
 public class Converter implements Processor {
 	
+	private static final Logger logger = LoggerFactory.getLogger(Converter.class);
+	
 	private LMClassifier classfier;
 	private static String urlPatternString = "((https?|ftp|gopher|telnet|file|Unsure|http):((//)|(\\\\))+[\\w\\d:#@%/;$()~_?\\+-=\\\\\\.&]*)";
 	private static Pattern urlPattern = Pattern.compile(urlPatternString,Pattern.CASE_INSENSITIVE);
@@ -29,15 +32,8 @@ public class Converter implements Processor {
 	
 	
 	public Converter() throws Exception {
-		try {
-			classfier = (LMClassifier) AbstractExternalizable.readObject(new File("classifier.txt"));
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
-		
-		System.out.println("Converter initialized.");
+		classfier = (LMClassifier) AbstractExternalizable.readObject(new File("classifier.txt"));
+		logger.info("Converter initialized.");
 	}
 
 	@Override
