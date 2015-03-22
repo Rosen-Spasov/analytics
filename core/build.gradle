@@ -1,0 +1,3 @@
+dependencies {
+	compile(group: 'org.apache.camel', name: 'camel-spring', version: '2.15.0')
+}
