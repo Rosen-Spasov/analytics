@@ -13,21 +13,28 @@
 
 		<endpoint id="eventsEndpoint" uri="vm:topic:twitterEvents?multipleConsumers=true" />
 		<endpoint id="eventsEndpointOld" uri="vm:topic:twitterEventsOld?multipleConsumers=true" />
+		<endpoint id="websocketEndpoint" uri="websocket:cameltwitter?sendToAll=true&amp;port=8080&amp;staticResources=classpath:web" />
+		<endpoint id="twitterEndpoint" uri="twitter://search/tweets?type=polling&amp;delay=5&amp;keywords=#starbucks&amp;accessToken=1388971128-mtMr4MeGxiDqSFIXJeucHTJkGSpIho2OdbzR7ti&amp;accessTokenSecret=beAuEN8mKODjScBAa98ChqpAEYbRUOEj9HCK34gApU6gX&amp;consumerKey=u6L44e32rSntCLYp83wMlhHX8&amp;consumerSecret=P9eZODZYYsHPAnvkuCqa62ffziBABBPfG3PskWSDqFZf5M9ZEo"/>
 
 		<dataFormats>
 			<json id="json" library="Jackson" />
 		</dataFormats>
 
-		<route>
-			<from uri="twitter://search/tweets?type=polling&amp;delay=5&amp;keywords=#starbucks&amp;accessToken=1388971128-mtMr4MeGxiDqSFIXJeucHTJkGSpIho2OdbzR7ti&amp;accessTokenSecret=beAuEN8mKODjScBAa98ChqpAEYbRUOEj9HCK34gApU6gX&amp;consumerKey=u6L44e32rSntCLYp83wMlhHX8&amp;consumerSecret=P9eZODZYYsHPAnvkuCqa62ffziBABBPfG3PskWSDqFZf5M9ZEo" />
+		<route><!-- 
+			<from ref="twitterEndpoint" />
 			<process ref="converter" />
-			<marshal ref="json" />
+			<marshal ref="json" /> -->
+			<from uri="timer://test?fixedRate=true&amp;period=5000"/>
+			<setBody>
+  				<simple>Test Message</simple>
+			</setBody>
 			<to ref="eventsEndpoint" />
 		</route>
 
 		<route>
 			<from ref="eventsEndpoint" />
-			<to uri="websocket:cameltwitter?sendToAll=true&amp;port=8080&amp;staticResources=classpath:web/." />
+   			<to uri="stream:out"/>
+			<to ref="websocketEndpoint" />
 		</route>
 
 		<route>

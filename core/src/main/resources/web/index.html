@@ -27,7 +27,7 @@
 	var map = null, posMarker = null, negMarker = null, neuMarker = null, total = 0, pos = 0, neu = 0, neg = 0;
 
 	function initializeMap() {
-		console.log('Initializing map');
+		console.log('Initializing map...');
 		var myLatlng = new google.maps.LatLng(42.699217, 23.315020);
 		var mapOptions = {
 			center : myLatlng,
@@ -48,6 +48,7 @@
 				"http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|BBBBBB",
 				new google.maps.Size(21, 34), new google.maps.Point(0, 0),
 				new google.maps.Point(10, 34));
+		console.log('Map initialization completed.');
 	}
 
 	google.maps.event.addDomListener(window, 'load', initializeMap);
@@ -99,24 +100,12 @@
 	function addTweetToTable(tweet) {
 		var number = $('#tweets_table tr').length;
 		var nextRow = '<tr class=" ' +  tweet.sentiment + ' " >'
-				+ '<td>'
-				+ number
-				+ '</td>'
-				+ '<td>'
-				+ tweet.timestamp
-				+ '</td>'
-				+ '<td>'
-				+ Autolinker.link('@' + tweet.name)
-				+ '</td>'
-				+ '<td>'
-				+ Autolinker.link(tweet.text)
-				+ '</td>'
-				+ '<td>'
-				+ tweet.sentiment
-				+ '</td>'
-				+ '<td>'
-				+ tweet.geolocated
-				+ '</td>'
+				+ '<td>' + number + '</td>'
+				+ '<td>' + tweet.timestamp + '</td>'
+				+ '<td>' + Autolinker.link('@' + tweet.name) + '</td>'
+				+ '<td>' + Autolinker.link(tweet.text) + '</td>'
+				+ '<td>' + tweet.sentiment + '</td>'
+				+ '<td>' + tweet.geolocated + '</td>'
 				+ '<td><a href=" ' + tweet.url + ' " target"_blank"="" title="Open original tweet">Link</a></td></tr>'
 		$('#tweets_table tbody').append(nextRow);
 		return number;
@@ -170,10 +159,15 @@
 	$(document).ready(
 			function() {
 				if (!window.WebSocket) {
-					$('#pictures').text(
-							"ERROR: Your browser doesn't support websockets!");
+					$('#pictures').text("ERROR: Your browser doesn't support websockets!");
 				} else {
-					app.start();
+					console.log("Starting application...")
+					//app.start();
+					try {
+						var socket = new WebSocket("ws://localhost:8080/mysocket");
+					} catch(exception){
+						$('#chatLog').append('<p>Error'+exception+'</p>');
+				    }
 				}
 			});
 </script>
