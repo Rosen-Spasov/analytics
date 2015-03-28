@@ -1,0 +1,10 @@
+Distributed Data - Hadoop, Hbase and Hive - http://anders.com/cms/282/Distributed.Data/Hadoop/Hbase/Hive
+http://dba.stackexchange.com/questions/55632/2-billion-row-fact-table-in-star-schema-on-oracle-advisable
+BI SQL vs NoSQL - http://www.databasejournal.com/sqletc/article.php/3919371/Business-Intelligence---SQL-or-NoSQL---Which-is-better.htm
+Star and Snowflake Schemas - http://www.oracle.com/webfolder/technetwork/tutorials/obe/db/10g/r2/owb/owb10gr2_gs/owb/lesson3/starandsnowflake.htm
+Implementing Star Schema - http://www.anujgakhar.com/2010/09/12/implementing-star-schema-design/
+Stars: A Pattern Language for Query Optimized Schema - http://c2.com/ppr/stars.html
+OLTP vs OLAP - http://stackoverflow.com/questions/21900185/what-are-oltp-and-olap-what-is-the-difference-between-them
+OLTP vs OLAP - http://datawarehouse4u.info/OLTP-vs-OLAP.html
+Finding patterns in star schema - http://web.ist.utl.pt/andreia.silva/articles/silva2012mdai.pdf
+Apache Calcide - http://www.slideshare.net/julianhyde/calcite-stratany2014
