@@ -4,52 +4,49 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<!-- <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent"> 
-		<property name="brokerURL" value="tcp://localhost:61616"/> </bean> -->
-
 	<bean id="converter" class="events.gateway.Converter" />
 
 	<camelContext id="defaultContext" xmlns="http://camel.apache.org/schema/spring" autoStartup="true">
 
 		<endpoint id="eventsEndpoint" uri="vm:topic:twitterEvents?multipleConsumers=true" />
 		<endpoint id="eventsEndpointOld" uri="vm:topic:twitterEventsOld?multipleConsumers=true" />
-		<endpoint id="websocketEndpoint" uri="websocket:cameltwitter?sendToAll=true&amp;port=8080&amp;staticResources=classpath:web" />
 		<endpoint id="twitterEndpoint" uri="twitter://search/tweets?type=polling&amp;delay=5&amp;keywords=#starbucks&amp;accessToken=1388971128-mtMr4MeGxiDqSFIXJeucHTJkGSpIho2OdbzR7ti&amp;accessTokenSecret=beAuEN8mKODjScBAa98ChqpAEYbRUOEj9HCK34gApU6gX&amp;consumerKey=u6L44e32rSntCLYp83wMlhHX8&amp;consumerSecret=P9eZODZYYsHPAnvkuCqa62ffziBABBPfG3PskWSDqFZf5M9ZEo"/>
+		<endpoint id="websocketEndpoint" uri="websocket://localhost:8080/cameltwitter?sendToAll=true&amp;staticResources=classpath:web" />
+		<endpoint id="fileEndpoint" uri="file://c:/twitterEvents?noop=true" />
 
 		<dataFormats>
 			<json id="json" library="Jackson" />
 		</dataFormats>
 
-		<route><!-- 
-			<from ref="twitterEndpoint" />
-			<process ref="converter" />
-			<marshal ref="json" /> -->
+		<!-- <route>
 			<from uri="timer://test?fixedRate=true&amp;period=5000"/>
 			<setBody>
   				<simple>Test Message</simple>
 			</setBody>
 			<to ref="eventsEndpoint" />
+		</route> -->
+
+		<route>
+			<from ref="twitterEndpoint" />
+			<process ref="converter" />
+			<marshal ref="json" />
+			<to ref="eventsEndpoint" />
 		</route>
 
 		<route>
 			<from ref="eventsEndpoint" />
-   			<to uri="stream:out"/>
+			<to ref="fileEndpoint" />
 			<to ref="websocketEndpoint" />
 		</route>
 
 		<route>
-			<from ref="eventsEndpoint" />
-			<to uri="file://c:/twitterEvents" />
-		</route>
-
-		<route>
-			<from uri="file://c:/twitterEvents" />
+			<from ref="fileEndpoint" />
 			<to ref="eventsEndpointOld" />
 		</route>
 
 		<route>
 			<from ref="eventsEndpointOld" />
-			<to uri="websocket:cameltwitter?sendToAll=true&amp;port=8080&amp;staticResources=classpath:web/." />
+			<to ref="websocketEndpoint" />
 		</route>
 
 	</camelContext>

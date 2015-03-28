@@ -33,21 +33,17 @@
 			center : myLatlng,
 			zoom : 2
 		};
-		map = new google.maps.Map(document.getElementById("map-canvas"),
-				mapOptions);
+		map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
 
 		negMarker = new google.maps.MarkerImage(
 				"http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|990000",
-				new google.maps.Size(21, 34), new google.maps.Point(0, 0),
-				new google.maps.Point(10, 34));
+				new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
 		posMarker = new google.maps.MarkerImage(
 				"http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|009900",
-				new google.maps.Size(21, 34), new google.maps.Point(0, 0),
-				new google.maps.Point(10, 34));
+				new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
 		neuMarker = new google.maps.MarkerImage(
 				"http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|BBBBBB",
-				new google.maps.Size(21, 34), new google.maps.Point(0, 0),
-				new google.maps.Point(10, 34));
+				new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
 		console.log('Map initialization completed.');
 	}
 
@@ -69,7 +65,7 @@
 
 		var index = addTweetToTable(tweet);
 		updateStats(tweet);
-		addMarkertToMap(tweet, index);
+		addMarkerToMap(tweet, index);
 	}
 
 	function updateStats(tweet) {
@@ -111,9 +107,9 @@
 		return number;
 	}
 
-	function addMarkertToMap(tweet, index) {
+	function addMarkerToMap(tweet, index) {
 		if (tweet.geolocated) {
-			console.log('adding marker');
+			console.log('Adding marker to map.');
 			var image = neuMarker;
 			switch (tweet.sentiment) {
 			case 'pos':
@@ -124,8 +120,7 @@
 				break;
 			}
 
-			var myLatlng1 = new google.maps.LatLng(tweet.latitude,
-					tweet.longtitude);
+			var myLatlng1 = new google.maps.LatLng(tweet.latitude, tweet.longtitude);
 			var marker1 = new google.maps.Marker({
 				position : myLatlng1,
 				map : map,
@@ -138,8 +133,7 @@
 
 	var app = {
 		start : function() {
-			var location = "ws://localhost:8080/cameltwitter";
-			this._ws = new WebSocket(location);
+			this._ws = new WebSocket("ws://localhost:8080/cameltwitter");
 			this._ws.onmessage = this._onmessage;
 			this._ws.onclose = this._onclose;
 		},
@@ -162,12 +156,7 @@
 					$('#pictures').text("ERROR: Your browser doesn't support websockets!");
 				} else {
 					console.log("Starting application...")
-					//app.start();
-					try {
-						var socket = new WebSocket("ws://localhost:8080/mysocket");
-					} catch(exception){
-						$('#chatLog').append('<p>Error'+exception+'</p>');
-				    }
+					app.start();
 				}
 			});
 </script>
@@ -176,9 +165,10 @@
 	<div id="content">
 		<div id="overview">
 			<h2>#Starbucks events monitor</h2>
-			Tweets received: <span id="total">0 </span><br /> Positive: <span
-				id="positive">0 </span><br /> Negative: <span id="negative">0
-			</span><br /> Neutral: <span id="neutral">0 </span><br />
+			Tweets received: <span id="total">0 </span><br/>
+			Positive: <span id="positive">0 </span><br/>
+			Negative: <span id="negative">0 </span><br/>
+			Neutral: <span id="neutral">0 </span><br/>
 		</div>
 
 		<div id="map-canvas"></div>
@@ -195,12 +185,20 @@
 						<th>Link</th>
 					</tr>
 				</thead>
+                <tbody>
+<!--                     <tr class="red" >
+                        <td>-1</td>
+                        <!-- <td><a href="" target"_blank"="" title="View task details">86</a></td> -->
+<!--                         <td>[13:14:21]</td>
+                        <td >username</td>
+                        <td>text goes here</td>
+                        <td>neu</td>
+                        <td><a href="" target"_blank"="" title="Open original tweet">Link</a></td>
+                    </tr>  -->
+                </tbody>
 			</table>
 		</div>
-		<div id="footer">
-			Powered by <a href="http://camel.apache.org/" target="_blank">Apache
-				Camel</a>
-		</div>
+		<div id="footer">Powered by <a href="http://camel.apache.org/" target="_blank">Apache Camel</a></div>
 	</div>
 </body>
 </html>

@@ -81,4 +81,12 @@ public class Tweet {
     public Double getLongtitude() {
     	return this.longtitude;
     }
+
+	@Override
+	public String toString() {
+		return "Tweet [name=" + name + ", text=" + text + ", timestamp="
+				+ timestamp + ", sentiment=" + sentiment + ", url=" + url
+				+ ", geolocated=" + geolocated + ", latitude=" + latitude
+				+ ", longtitude=" + longtitude + "]";
+	}
 }

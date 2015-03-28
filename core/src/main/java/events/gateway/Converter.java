@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import twitter4j.Status;
 
-import com.aliasi.classify.ConditionalClassification;
+import com.aliasi.classify.JointClassification;
 import com.aliasi.classify.LMClassifier;
 import com.aliasi.util.AbstractExternalizable;
 
@@ -53,7 +53,7 @@ public class Converter implements Processor {
         	.withName(username)
         	.withText(status.getText())
         	.withTimestamp(timeStamp)
-        	.withSentiment(this.classify(status.getText()))
+        	.withSentiment(classify(status.getText()))
         	.withUrl(url);
 		
 		if (status.getGeoLocation()!=null){
@@ -62,14 +62,15 @@ public class Converter implements Processor {
 				.withLongtitude(status.getGeoLocation().getLongitude());
 		}
 		
+		logger.info("Processed tweet event: " + tweet);
 		exchange.getIn().setBody(tweet);
 	}
 	
 	private String classify(String text) {
 		text = sanitizeText(text);
-		
-		ConditionalClassification classification = classfier.classify(text);
-		return classification.bestCategory();
+		JointClassification classification = classfier.classify(text);
+		String category = classification.bestCategory();
+		return (category != null) ? category : "neu";
 	}
 	
 	private String sanitizeText(String text){
