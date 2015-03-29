@@ -4,28 +4,33 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<bean id="myDataSet" class="rspasov.bam.dataset.OrderReceivedDataSet">
-		<property name="reportCount" value="10000" />
+	<bean id="sendDataSet" class="rspasov.bam.dataset.OrderReceivedDataSet">
+		<property name="reportCount" value="1000" />
 		<property name="size" value="100000" />
 	</bean>
+
+	<bean id="receiveDataSet" class="rspasov.bam.dataset.OrderReceivedDataSet" />
 	
 	<bean id="aggregatorStrategy" class="rspasov.bam.aggregate.BodyInAggregationStrategy" />
 
 	<camelContext id="defaultContext" xmlns="http://camel.apache.org/schema/spring" autoStartup="true">
 
 	<route>
-		<from uri="dataset:myDataSet?produceDelay=-1" />
-		<aggregate strategyRef="aggregatorStrategy" completionInterval="3000">
+		<from uri="dataset:sendDataSet?produceDelay=-1" />
+   		<!-- <log message="Sent event: ${body}"/> -->
+		<!-- <aggregate strategyRef="aggregatorStrategy" completionSize="10" completionInterval="100"> -->
+		<aggregate strategyRef="aggregatorStrategy" completionInterval="1000">
             <correlationExpression>
                 <simple>header.dimension</simple>
             </correlationExpression>
-		<to uri="vm:events" />
+			<to uri="vm:events" />
         </aggregate>
 	</route>
 
 	<route>
 		<from uri="vm:events" />
-		<to uri="dataset:myDataSet" />
+   		<log message="Received event: ${body}"/>
+		<to uri="dataset:receiveDataSet" />
 	</route>
 
 	</camelContext>

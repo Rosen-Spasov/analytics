@@ -44,7 +44,7 @@ abstract class AbstractEvent implements Event {
 
 	@Override
 	public String toString() {
-		return "AbstractEvent [dimension=" + dimension + ", fact=" + fact + ", timestamp=" + timestamp + "]";
+		return getType() + " [dimension=" + dimension + ", fact=" + fact + ", timestamp=" + timestamp + "]";
 	}
 
 }

@@ -1,9 +1,12 @@
 package rspasov.bam.aggregate;
 
+import java.time.Instant;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 import rspasov.bam.event.Event;
+import rspasov.bam.event.GenericEvent;
 
 public class BodyInAggregationStrategy implements AggregationStrategy {
 
@@ -13,10 +16,18 @@ public class BodyInAggregationStrategy implements AggregationStrategy {
 			return newExchange;
 		}
 
-		Event oldBody = oldExchange.getIn().getBody(Event.class);
-		Event newBody = newExchange.getIn().getBody(Event.class);
-		oldExchange.getIn().setBody(oldBody + "+" + newBody);
+		Event oldEvent = oldExchange.getIn().getBody(Event.class);
+		Event newEvent = newExchange.getIn().getBody(Event.class);
+
+		double fact = oldEvent.getFact() + newEvent.getFact();
+		GenericEvent aggregated = new GenericEvent(oldEvent.getDimension(), fact, timestamp(), oldEvent.getType(), oldEvent.getDimensionName(),
+				oldEvent.getFactName());
+		oldExchange.getIn().setBody(aggregated);
 		return oldExchange;
+	}
+
+	private String timestamp() {
+		return Instant.now().toString();
 	}
 
 }

@@ -38,7 +38,7 @@ public class OrderReceivedDataSet extends DataSetSupport {
 	}
 
 	private double fact() {
-		return rangeMin + (rangeMax - rangeMin) * random.nextDouble();
+		return (int) (rangeMin + (rangeMax - rangeMin) * random.nextDouble());
 	}
 
 	private String timestamp() {
