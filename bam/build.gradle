@@ -2,4 +2,6 @@ dependencies {
 	compile(group: 'org.apache.camel', name: 'camel-spring', version: camelVersion)
 	
 	runtime(group: 'org.slf4j', name: 'slf4j-log4j12', version: slf4jVersion)
+	
+	testCompile(group: 'junit', name: 'junit', version: junitVersion)
 }

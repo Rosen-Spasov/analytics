@@ -4,15 +4,22 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+	<bean id="myDataSet" class="org.apache.camel.component.dataset.SimpleDataSet">
+		<property name="reportCount" value="100000" />
+		<property name="size" value="100000000" />
+	</bean>
+
 	<camelContext id="defaultContext" xmlns="http://camel.apache.org/schema/spring" autoStartup="true">
 
-		<!-- <route>
-			<from uri="timer://test?fixedRate=true&amp;period=5000"/>
-			<setBody>
-  				<simple>Test Message</simple>
-			</setBody>
-			<to ref="eventsEndpoint" />
-		</route> -->
+	<route>
+		<from uri="dataset:myDataSet?produceDelay=-1" />
+		<to uri="vm:events" />
+	</route>
+
+	<route>
+		<from uri="vm:events" />
+		<to uri="dataset:myDataSet" />
+	</route>
 
 	</camelContext>
 	
