@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<title>#Starbucks events monitor</title>
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" href="css/main.css" type="text/css"
+	media="screen" />
+
+<script src="js/jquery.min.js"></script>
+<script src="js/autolinker.min.js"></script>
+
+<link
+	href='http://fonts.googleapis.com/css?family=Fredoka+One|Open+Sans:400,700'
+	rel='stylesheet' type='text/css'>
+</head>
+
+
+<script type="text/javascript"
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAh5Ora3kZi_q5GmbUEun-4EfUMgI4Yttc&sensor=true">
+	
+</script>
+
+<script type="text/javascript">
+
+	console.log('Start...');
+	var map = null, posMarker = null, negMarker = null, neuMarker = null, total = 0, pos = 0, neu = 0, neg = 0;
+
+	function initializeMap() {
+		console.log('Initializing map...');
+		var myLatlng = new google.maps.LatLng(42.699217, 23.315020);
+		var mapOptions = {
+			center : myLatlng,
+			zoom : 2
+		};
+		map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+
+		negMarker = new google.maps.MarkerImage(
+				"http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|990000",
+				new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
+		posMarker = new google.maps.MarkerImage(
+				"http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|009900",
+				new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
+		neuMarker = new google.maps.MarkerImage(
+				"http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|BBBBBB",
+				new google.maps.Size(21, 34), new google.maps.Point(0, 0), new google.maps.Point(10, 34));
+		console.log('Map initialization completed.');
+	}
+
+	google.maps.event.addDomListener(window, 'load', initializeMap);
+
+	var index = 0;
+	$(window).keydown(function(event) {
+		if (event.which == 27) {
+			// the following seems to fix the symptom but only in case the document has the focus
+			// prevents websocket ESC bug
+			event.preventDefault();
+		}
+	});
+
+	function processTweet(data) {
+		console.log('Processing tweet');
+		var tweet = jQuery.parseJSON(data);
+		console.log('tweet received:', tweet);
+
+		var index = addTweetToTable(tweet);
+		updateStats(tweet);
+		addMarkerToMap(tweet, index);
+	}
+
+	function updateStats(tweet) {
+		total++;
+		$('#total').html(total);
+
+		switch (tweet.sentiment) {
+		case 'pos':
+			pos++;
+			break;
+		case 'neg':
+			neg++;
+			break;
+		case 'neu':
+			neu++;
+			break;
+		}
+
+		var text = pos + ' (' + (Math.floor((pos / total) * 100)) + '%)';
+		$('#positive').html(text);
+		text = neg + ' (' + (Math.floor((neg / total) * 100)) + '%)';
+		$('#negative').html(text);
+		text = neu + ' (' + (Math.floor((neu / total) * 100)) + '%)';
+		$('#neutral').html(text);
+
+	}
+
+	function addTweetToTable(tweet) {
+		var number = $('#tweets_table tr').length;
+		var nextRow = '<tr class=" ' +  tweet.sentiment + ' " >'
+				+ '<td>' + number + '</td>'
+				+ '<td>' + tweet.timestamp + '</td>'
+				+ '<td>' + Autolinker.link('@' + tweet.name) + '</td>'
+				+ '<td>' + Autolinker.link(tweet.text) + '</td>'
+				+ '<td>' + tweet.sentiment + '</td>'
+				+ '<td>' + tweet.geolocated + '</td>'
+				+ '<td><a href=" ' + tweet.url + ' " target"_blank"="" title="Open original tweet">Link</a></td></tr>'
+		$('#tweets_table tbody').append(nextRow);
+		return number;
+	}
+
+	function addMarkerToMap(tweet, index) {
+		if (tweet.geolocated) {
+			console.log('Adding marker to map.');
+			var image = neuMarker;
+			switch (tweet.sentiment) {
+			case 'pos':
+				image = posMarker;
+				break;
+			case 'neg':
+				image = negMarker;
+				break;
+			}
+
+			var myLatlng1 = new google.maps.LatLng(tweet.latitude, tweet.longtitude);
+			var marker1 = new google.maps.Marker({
+				position : myLatlng1,
+				map : map,
+				icon : image,
+				title : index + ':' + tweet.text
+			});
+		}
+		return;
+	}
+
+	var app = {
+		start : function() {
+			this._ws = new WebSocket("ws://localhost:8080/cameltwitter");
+			this._ws.onmessage = this._onmessage;
+			this._ws.onclose = this._onclose;
+		},
+
+		_onmessage : function(m) {
+			if (m.data) {
+				processTweet(m.data);
+			}
+		},
+
+		_onclose : function(m) {
+			this._ws = null;
+		}
+
+	};
+
+	$(document).ready(
+			function() {
+				if (!window.WebSocket) {
+					$('#pictures').text("ERROR: Your browser doesn't support websockets!");
+				} else {
+					console.log("Starting application...")
+					app.start();
+				}
+			});
+</script>
+
+<body>
+	<div id="content">
+		<div id="overview">
+			<h2>#Starbucks events monitor</h2>
+			Tweets received: <span id="total">0 </span><br/>
+			Positive: <span id="positive">0 </span><br/>
+			Negative: <span id="negative">0 </span><br/>
+			Neutral: <span id="neutral">0 </span><br/>
+		</div>
+
+		<div id="map-canvas"></div>
+		<div id="tweets_table">
+			<table id="tweets_tabel" class="twittertable" border="1">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Timestamp</th>
+						<th>Username</th>
+						<th>Text</th>
+						<th>Sentiment</th>
+						<th>Geolocated</th>
+						<th>Link</th>
+					</tr>
+				</thead>
+                <tbody>
+<!--                     <tr class="red" >
+                        <td>-1</td>
+                        <!-- <td><a href="" target"_blank"="" title="View task details">86</a></td> -->
+<!--                         <td>[13:14:21]</td>
+                        <td >username</td>
+                        <td>text goes here</td>
+                        <td>neu</td>
+                        <td><a href="" target"_blank"="" title="Open original tweet">Link</a></td>
+                    </tr>  -->
+                </tbody>
+			</table>
+		</div>
+		<div id="footer">Powered by <a href="http://camel.apache.org/" target="_blank">Apache Camel</a></div>
+	</div>
+</body>
+</html>

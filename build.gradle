@@ -1,0 +1,26 @@
+import org.gradle.plugins.ide.eclipse.model.SourceFolder
+
+allprojects {
+	repositories {
+		jcenter()
+		maven {
+	        url "http://clojars.org/repo"
+		}
+	}
+	apply plugin: 'eclipse'
+	tasks.eclipse.dependsOn(cleanEclipse)
+}
+
+subprojects {
+	apply plugin: 'java'
+	defaultTasks 'build', 'eclipse'
+
+	task createDirs << {
+	    sourceSets*.java.srcDirs*.each { it.mkdirs() }
+	    sourceSets*.resources.srcDirs*.each { it.mkdirs() }
+	}
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
