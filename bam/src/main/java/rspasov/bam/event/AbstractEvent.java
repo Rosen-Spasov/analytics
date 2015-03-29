@@ -2,6 +2,8 @@ package rspasov.bam.event;
 
 abstract class AbstractEvent implements Event {
 
+	private static final long serialVersionUID = 1L;
+
 	protected String dimension;
 
 	protected double fact;

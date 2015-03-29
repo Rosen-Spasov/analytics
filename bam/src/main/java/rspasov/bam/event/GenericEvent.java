@@ -2,6 +2,8 @@ package rspasov.bam.event;
 
 public class GenericEvent extends AbstractEvent {
 
+	private static final long serialVersionUID = 1L;
+
 	protected final String type;
 
 	protected final String dimensionName;

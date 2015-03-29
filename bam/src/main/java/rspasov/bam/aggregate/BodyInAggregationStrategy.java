@@ -12,7 +12,7 @@ public class BodyInAggregationStrategy implements AggregationStrategy {
 
 	@Override
 	public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-		if (oldExchange == null) {
+		if (oldExchange == null || oldExchange.getIn() == null || oldExchange.getIn().getBody() == null) {
 			return newExchange;
 		}
 

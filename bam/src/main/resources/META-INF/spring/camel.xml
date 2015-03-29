@@ -13,13 +13,18 @@
 	
 	<bean id="aggregatorStrategy" class="rspasov.bam.aggregate.BodyInAggregationStrategy" />
 
+	<bean id="aggregationRepository" class="org.apache.camel.component.leveldb.LevelDBAggregationRepository">
+		<property name="persistentFileName" value="target/data/leveldb.dat" />
+		<property name="repositoryName" value="aggregationRepository" />
+	</bean>
+
 	<camelContext id="defaultContext" xmlns="http://camel.apache.org/schema/spring" autoStartup="true">
 
 	<route>
 		<from uri="dataset:sendDataSet?produceDelay=-1" />
    		<!-- <log message="Sent event: ${body}"/> -->
 		<!-- <aggregate strategyRef="aggregatorStrategy" completionSize="10" completionInterval="100"> -->
-		<aggregate strategyRef="aggregatorStrategy" completionInterval="1000">
+		<aggregate strategyRef="aggregatorStrategy" aggregationRepositoryRef="aggregationRepository" completionInterval="1000">
             <correlationExpression>
                 <simple>header.dimension</simple>
             </correlationExpression>
