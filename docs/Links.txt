@@ -8,3 +8,6 @@ OLTP vs OLAP - http://stackoverflow.com/questions/21900185/what-are-oltp-and-ola
 OLTP vs OLAP - http://datawarehouse4u.info/OLTP-vs-OLAP.html
 Finding patterns in star schema - http://web.ist.utl.pt/andreia.silva/articles/silva2012mdai.pdf
 Apache Calcide - http://www.slideshare.net/julianhyde/calcite-stratany2014
+Sending Metrics From Storm to Graphite - http://www.michael-noll.com/blog/2013/11/06/sending-metrics-from-storm-to-graphite/
+https://blog.twitter.com/2014/tsar-a-timeseries-aggregator
+Implementing Real-Time Trending Topics With a Distributed Rolling Count Algorithm in Storm - http://www.michael-noll.com/blog/2013/01/18/implementing-real-time-trending-topics-in-storm/
