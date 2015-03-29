@@ -3,6 +3,7 @@ package rspasov.bam.dataset;
 import java.time.Instant;
 import java.util.Random;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.dataset.DataSetSupport;
 
 import rspasov.bam.event.OrderReceivedEvent;
@@ -17,9 +18,19 @@ public class OrderReceivedDataSet extends DataSetSupport {
 
 	private static final double rangeMax = 100;
 
+	private OrderReceivedEvent lastEvent;
+
+	@Override
+	protected void applyHeaders(Exchange exchange, long messageIndex) {
+		if (lastEvent != null) {
+			exchange.getIn().setHeader("dimension", lastEvent.getDimension());
+		}
+	}
+
 	@Override
 	protected Object createMessageBody(long messageIndex) {
-		return new OrderReceivedEvent(dimension(), fact(), timestamp());
+		lastEvent = new OrderReceivedEvent(dimension(), fact(), timestamp());
+		return lastEvent;
 	}
 
 	private String dimension() {

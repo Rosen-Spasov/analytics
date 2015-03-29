@@ -4,16 +4,23 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<bean id="myDataSet" class="org.apache.camel.component.dataset.SimpleDataSet">
-		<property name="reportCount" value="100000" />
-		<property name="size" value="100000000" />
+	<bean id="myDataSet" class="rspasov.bam.dataset.OrderReceivedDataSet">
+		<property name="reportCount" value="10000" />
+		<property name="size" value="100000" />
 	</bean>
+	
+	<bean id="aggregatorStrategy" class="rspasov.bam.aggregate.BodyInAggregationStrategy" />
 
 	<camelContext id="defaultContext" xmlns="http://camel.apache.org/schema/spring" autoStartup="true">
 
 	<route>
 		<from uri="dataset:myDataSet?produceDelay=-1" />
+		<aggregate strategyRef="aggregatorStrategy" completionInterval="3000">
+            <correlationExpression>
+                <simple>header.dimension</simple>
+            </correlationExpression>
 		<to uri="vm:events" />
+        </aggregate>
 	</route>
 
 	<route>
