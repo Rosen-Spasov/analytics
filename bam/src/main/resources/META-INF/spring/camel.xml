@@ -19,24 +19,27 @@
 	</bean>
 
 	<camelContext id="defaultContext" xmlns="http://camel.apache.org/schema/spring" autoStartup="true">
+		
+		<endpoint id="websocketEndpoint" uri="websocket://localhost:8080/events?sendToAll=true&amp;staticResources=classpath:webapp" />
 
-	<route>
-		<from uri="dataset:sendDataSet?produceDelay=-1" />
-   		<!-- <log message="Sent event: ${body}"/> -->
-		<!-- <aggregate strategyRef="aggregatorStrategy" completionSize="10" completionInterval="100"> -->
-		<aggregate strategyRef="aggregatorStrategy" aggregationRepositoryRef="aggregationRepository" completionInterval="1000">
-            <correlationExpression>
-                <simple>header.dimension</simple>
-            </correlationExpression>
-			<to uri="vm:events" />
-        </aggregate>
-	</route>
-
-	<route>
-		<from uri="vm:events" />
-   		<log message="Received event: ${body}"/>
-		<to uri="dataset:receiveDataSet" />
-	</route>
+		<route>
+			<from uri="dataset:sendDataSet?produceDelay=-1" />
+	   		<!-- <log message="Sent event: ${body}"/> -->
+			<!-- <aggregate strategyRef="aggregatorStrategy" completionSize="10" completionInterval="100"> -->
+			<aggregate strategyRef="aggregatorStrategy" aggregationRepositoryRef="aggregationRepository" completionInterval="1000">
+	            <correlationExpression>
+	                <simple>header.dimension</simple>
+	            </correlationExpression>
+				<to uri="vm:events" />
+	        </aggregate>
+		</route>
+	
+		<route>
+			<from uri="vm:events" />
+	   		<log message="Received event: ${body}"/>
+			<to uri="dataset:receiveDataSet" />
+			<to ref="websocketEndpoint" />
+		</route>
 
 	</camelContext>
 	
