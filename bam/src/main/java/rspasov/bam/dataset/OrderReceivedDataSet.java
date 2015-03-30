@@ -24,6 +24,7 @@ public class OrderReceivedDataSet extends DataSetSupport {
 	protected void applyHeaders(Exchange exchange, long messageIndex) {
 		if (lastEvent != null) {
 			exchange.getIn().setHeader("dimension", lastEvent.getDimension());
+			exchange.getIn().setHeader("timestamp", lastEvent.getTimestamp());
 		}
 	}
 

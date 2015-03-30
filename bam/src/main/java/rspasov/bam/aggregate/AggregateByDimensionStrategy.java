@@ -8,7 +8,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import rspasov.bam.event.Event;
 import rspasov.bam.event.GenericEvent;
 
-public class BodyInAggregationStrategy implements AggregationStrategy {
+public class AggregateByDimensionStrategy implements AggregationStrategy {
 
 	@Override
 	public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

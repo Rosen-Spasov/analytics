@@ -8,38 +8,62 @@
 <script src="js/jquery.min.js"></script>
 <script src="js/Chart.js"></script>
 <script type="text/javascript">
+
 	Chart.defaults.global.responsive = true;
+
+	var myLineChart = null;
 	
 	var data = {
-	    labels: ["January", "February", "March", "April", "May", "June", "July"],
+		labels: [],
 	    datasets: [
 	        {
-	            label: "My First dataset",
+	            label: "Google",
 	            fillColor: "rgba(220,220,220,0.2)",
 	            strokeColor: "rgba(220,220,220,1)",
 	            pointColor: "rgba(220,220,220,1)",
 	            pointStrokeColor: "#fff",
 	            pointHighlightFill: "#fff",
 	            pointHighlightStroke: "rgba(220,220,220,1)",
-	            data: [65, 59, 80, 81, 56, 55, 40]
 	        },
 	        {
-	            label: "My Second dataset",
+	            label: "Microsoft",
 	            fillColor: "rgba(151,187,205,0.2)",
 	            strokeColor: "rgba(151,187,205,1)",
 	            pointColor: "rgba(151,187,205,1)",
 	            pointStrokeColor: "#fff",
 	            pointHighlightFill: "#fff",
 	            pointHighlightStroke: "rgba(151,187,205,1)",
-	            data: [28, 48, 40, 19, 86, 27, 90]
+	        },
+	        {
+	            label: "Apple",
+	            fillColor: "rgba(101,137,155,0.2)",
+	            strokeColor: "rgba(101,137,155,1)",
+	            pointColor: "rgba(101,137,155,1)",
+	            pointStrokeColor: "#fff",
+	            pointHighlightFill: "#fff",
+	            pointHighlightStroke: "rgba(101,137,155,1)",
 	        }
 	    ]
 	};
 	
+	function addEventToChart(event) {
+		switch (event.dimension) {
+			case 'Google':
+				myLineChart.addData([event.fact, 0, 0], event.timestamp);
+				break;
+			case 'Microsoft':
+				myLineChart.addData([0, event.fact, 0], event.timestamp);
+				break;
+			case 'Apple':
+				myLineChart.addData([0, 0, event.fact], event.timestamp);
+				break;
+		}
+	}
+	
     function processEvent(data) {
         console.log('Data received:', data);
         var event = jQuery.parseJSON(data);
-        console.log('Event received:', event);
+        addEventToChart(event)
     }
 
     var app = {
@@ -72,11 +96,11 @@
 </script>
 
 <body>
-	<canvas id="myChart" width="200" height="100"></canvas>
+	<canvas id="myChart" width="400" height="200"></canvas>
 	<script>
 		// Get the context of the canvas element we want to select
 		var ctx = document.getElementById("myChart").getContext("2d");
-		var myLineChart = new Chart(ctx).Line(data);
+		myLineChart = new Chart(ctx).Line(data);
 	</script>
 </body>
 </html>

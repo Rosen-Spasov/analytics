@@ -11,7 +11,9 @@
 
 	<bean id="receiveDataSet" class="rspasov.bam.dataset.OrderReceivedDataSet" />
 	
-	<bean id="aggregatorStrategy" class="rspasov.bam.aggregate.BodyInAggregationStrategy" />
+	<bean id="aggregateByDimensionStrategy" class="rspasov.bam.aggregate.AggregateByDimensionStrategy" />
+	
+	<bean id="aggregateByTimestampStrategy" class="rspasov.bam.aggregate.AggregateByTimestampStrategy" />
 
 	<bean id="aggregationRepository" class="org.apache.camel.component.leveldb.LevelDBAggregationRepository">
 		<property name="persistentFileName" value="target/data/leveldb.dat" />
@@ -20,6 +22,7 @@
 
 	<camelContext id="defaultContext" xmlns="http://camel.apache.org/schema/spring" autoStartup="true">
 		
+		<endpoint id=aggByDimensionEvents uri="vm:topic:aggByDimensionEvents?multipleConsumers=true" />
 		<endpoint id="websocketEndpoint" uri="websocket://localhost:8080/events?sendToAll=true&amp;staticResources=classpath:webapp" />
 		
 		<dataFormats>
@@ -28,23 +31,31 @@
 
 		<route>
 			<from uri="dataset:sendDataSet?produceDelay=-1" />
-	   		<!-- <log message="Sent event: ${body}"/> -->
-			<!-- <aggregate strategyRef="aggregatorStrategy" completionSize="10" completionInterval="100"> -->
-			<aggregate strategyRef="aggregatorStrategy" aggregationRepositoryRef="aggregationRepository" completionInterval="1000">
+			<aggregate strategyRef="aggregateByDimensionStrategy" aggregationRepositoryRef="aggregationRepository" completionInterval="1000">
 	            <correlationExpression>
 	                <simple>header.dimension</simple>
 	            </correlationExpression>
-				<to uri="vm:events" />
+				<to ref="aggByDimensionEvents" />
 	        </aggregate>
 		</route>
 	
 		<route>
-			<from uri="vm:events" />
-	   		<log message="Received event: ${body}"/>
+			<from ref="aggByDimensionEvents" />
+	   		<log message="Received event: ${body}" logName="rspasov.logger.AggByDimensionLogger" />
 			<to uri="dataset:receiveDataSet" />
+		</route>
+	
+		<route>
+			<from uri="aggByDimensionEvents" />
+			<aggregate strategyRef="aggregatorStrategy" aggregationRepositoryRef="aggregationRepository" completionInterval="1000">
+	            <correlationExpression>
+	                <simple>header.timestamp</simple>
+	            </correlationExpression>
 			<marshal ref="json" />
-	   		<log message="Marshalled event: ${body}"/>
+			<convertBodyTo type="java.lang.String" />
+	   		<log message="Marshalled event: ${body}" logName="rspasov.logger.TestLogger" />
 			<to ref="websocketEndpoint" />
+	        </aggregate>
 		</route>
 
 	</camelContext>
