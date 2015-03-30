@@ -32,15 +32,10 @@
 			<to ref="eventsEndpoint" />
 		</route> -->
 
-		<!-- <route>
+		<route>
 			<from ref="twitterEndpoint" />
 			<process ref="converter" />
 			<marshal ref="json" />
-			<to ref="eventsEndpoint" />
-		</route> -->
-
-		<route>
-			<from ref="facebookEndpoint" />
 			<to ref="eventsEndpoint" />
 		</route>
 
