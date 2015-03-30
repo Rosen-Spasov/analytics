@@ -2,7 +2,7 @@ package rspasov.core;
 
 import org.apache.camel.spring.Main;
 
-public class Application {
+public class SemanticAnalysisApplication {
 
 	public static void main(String[] args) throws Exception {
 		Main camel = new Main();
