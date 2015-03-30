@@ -21,6 +21,10 @@
 	<camelContext id="defaultContext" xmlns="http://camel.apache.org/schema/spring" autoStartup="true">
 		
 		<endpoint id="websocketEndpoint" uri="websocket://localhost:8080/events?sendToAll=true&amp;staticResources=classpath:webapp" />
+		
+		<dataFormats>
+			<json id="json" library="Jackson" />
+		</dataFormats>
 
 		<route>
 			<from uri="dataset:sendDataSet?produceDelay=-1" />
@@ -38,6 +42,8 @@
 			<from uri="vm:events" />
 	   		<log message="Received event: ${body}"/>
 			<to uri="dataset:receiveDataSet" />
+			<marshal ref="json" />
+	   		<log message="Marshalled event: ${body}"/>
 			<to ref="websocketEndpoint" />
 		</route>
 

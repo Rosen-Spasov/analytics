@@ -5,6 +5,7 @@
 <title>Simple Chart Viewer</title>
 </head>
 
+<script src="js/jquery.min.js"></script>
 <script src="js/Chart.js"></script>
 <script type="text/javascript">
 	Chart.defaults.global.responsive = true;
@@ -35,20 +36,15 @@
 	    ]
 	};
 	
-	
-/*
-    function processTweet(data) {
-        var tweet = jQuery.parseJSON(data);
-        console.log('tweet received:', tweet);
-
-        var index = addTweetToTable(tweet);
-        updateStats(tweet);
-        addMarkertToMap(tweet, index);
+    function processEvent(data) {
+        console.log('Data received:', data);
+        var event = jQuery.parseJSON(data);
+        console.log('Event received:', event);
     }
 
     var app = {
         start:function () {
-            var location = "ws://localhost:8080/cameltwitter";
+            var location = "ws://localhost:8080/events";
             this._ws = new WebSocket(location);
             this._ws.onmessage = this._onmessage;
             this._ws.onclose = this._onclose;
@@ -56,7 +52,7 @@
 
         _onmessage:function (m) {
             if (m.data) {
-                processTweet(m.data);
+                processEvent(m.data);
             }
         },
 
@@ -72,8 +68,7 @@
             app.start();
         }
     });
-*/
-
+    
 </script>
 
 <body>
