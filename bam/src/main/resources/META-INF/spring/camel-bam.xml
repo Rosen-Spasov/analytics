@@ -22,7 +22,7 @@
 
 	<camelContext id="defaultContext" xmlns="http://camel.apache.org/schema/spring" autoStartup="true">
 		
-		<endpoint id=aggByDimensionEvents uri="vm:topic:aggByDimensionEvents?multipleConsumers=true" />
+		<endpoint id="aggByDimensionEvents" uri="vm:topic:aggByDimensionEvents?multipleConsumers=true" />
 		<endpoint id="websocketEndpoint" uri="websocket://localhost:8080/events?sendToAll=true&amp;staticResources=classpath:webapp" />
 		
 		<dataFormats>
@@ -47,7 +47,7 @@
 	
 		<route>
 			<from uri="aggByDimensionEvents" />
-			<aggregate strategyRef="aggregatorStrategy" aggregationRepositoryRef="aggregationRepository" completionInterval="1000">
+			<aggregate strategyRef="aggregateByTimestampStrategy" aggregationRepositoryRef="aggregationRepository" completionInterval="1000">
 	            <correlationExpression>
 	                <simple>header.timestamp</simple>
 	            </correlationExpression>
