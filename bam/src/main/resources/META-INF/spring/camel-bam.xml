@@ -5,24 +5,14 @@
             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 	<bean id="sendDataSet" class="rspasov.bam.dataset.OrderReceivedDataSet">
-		<property name="reportCount" value="10000" />
-		<property name="size" value="100000" />
+		<property name="reportCount" value="10" />
+		<property name="size" value="1000" />
 	</bean>
-
-	<bean id="receiveDataSet" class="rspasov.bam.dataset.OrderReceivedDataSet" />
 	
-	<bean id="aggregateByDimensionStrategy" class="rspasov.bam.aggregate.AggregateByDimensionStrategy" />
-	
-	<bean id="aggregateByTimestampStrategy" class="rspasov.bam.aggregate.AggregateByTimestampStrategy" />
-
-	<bean id="aggregationRepository" class="org.apache.camel.component.leveldb.LevelDBAggregationRepository">
-		<property name="persistentFileName" value="target/data/leveldb.dat" />
-		<property name="repositoryName" value="aggregationRepository" />
-	</bean>
+	<bean id="movingAverageProcessor" class="rspasov.bam.processor.MovingAverageProcessor" />
 
 	<camelContext id="defaultContext" xmlns="http://camel.apache.org/schema/spring" autoStartup="true">
 		
-		<endpoint id="aggByDimensionEvents" uri="vm:topic:aggByDimensionEvents?multipleConsumers=true" />
 		<endpoint id="websocketEndpoint" uri="websocket://localhost:8080/events?sendToAll=true&amp;staticResources=classpath:webapp" />
 		
 		<dataFormats>
@@ -30,31 +20,20 @@
 		</dataFormats>
 
 		<route>
-			<from uri="dataset:sendDataSet?produceDelay=-1" />
-			<aggregate strategyRef="aggregateByDimensionStrategy" aggregationRepositoryRef="aggregationRepository" completionInterval="1000">
-	            <correlationExpression>
-	                <simple>header.dimension</simple>
-	            </correlationExpression>
-				<to ref="aggByDimensionEvents" />
-	        </aggregate>
-		</route>
-	
-		<route>
-			<from ref="aggByDimensionEvents" />
-	   		<!-- <log message="Received event: ${body}" logName="rspasov.logger.AggByDimensionLogger" /> -->
-			<to uri="dataset:receiveDataSet" />
-		</route>
-	
-		<route>
-			<from uri="aggByDimensionEvents" />
-			<aggregate strategyRef="aggregateByTimestampStrategy" aggregationRepositoryRef="aggregationRepository" completionInterval="1000">
-	            <correlationExpression>
-	                <simple>header.timestamp</simple>
-	            </correlationExpression>
-			<marshal ref="json" />
-			<convertBodyTo type="java.lang.String" />
-			<to ref="websocketEndpoint" />
-	        </aggregate>
+			<from uri="dataset:sendDataSet?produceDelay=500" />
+			<choice>
+	            <when>
+	                <simple>${header.dimension} == 'Google'</simple>
+	                <process ref="movingAverageProcessor" />
+					<marshal ref="json" />
+					<convertBodyTo type="java.lang.String" />
+					<to ref="websocketEndpoint" />
+	            </when>
+	            <otherwise>
+	                <stop />
+	            </otherwise>
+	        </choice>
+			<to uri="dataset:sendDataSet" />
 		</route>
 
 	</camelContext>

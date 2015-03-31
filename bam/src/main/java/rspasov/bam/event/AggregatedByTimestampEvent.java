@@ -26,4 +26,9 @@ public class AggregatedByTimestampEvent extends AbstractEvent {
 		return "AggregatedByTimestampEvent";
 	}
 
+	@Override
+	public String toString() {
+		return super.toString() + ", [events=" + events + "]";
+	}
+
 }
