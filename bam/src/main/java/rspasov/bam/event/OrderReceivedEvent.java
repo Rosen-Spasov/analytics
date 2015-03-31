@@ -1,6 +1,6 @@
 package rspasov.bam.event;
 
-public class OrderReceivedEvent extends AbstractEvent {
+public class OrderReceivedEvent extends AbstractBusinessEvent {
 
 	private static final long serialVersionUID = 1L;
 

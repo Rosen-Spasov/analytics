@@ -1,6 +1,6 @@
 package rspasov.bam.event;
 
-public class GenericEvent extends AbstractEvent {
+public class GenericEvent extends AbstractBusinessEvent {
 
 	private static final long serialVersionUID = 1L;
 

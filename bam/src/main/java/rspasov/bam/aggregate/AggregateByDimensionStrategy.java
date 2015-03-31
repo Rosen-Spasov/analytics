@@ -1,33 +1,21 @@
 package rspasov.bam.aggregate;
 
-import java.time.Instant;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
-
+import rspasov.bam.event.BusinessEvent;
 import rspasov.bam.event.Event;
 import rspasov.bam.event.GenericEvent;
 
-public class AggregateByDimensionStrategy implements AggregationStrategy {
+public class AggregateByDimensionStrategy extends AbstractEventAggregationStrategy {
 
 	@Override
-	public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-		if (oldExchange == null || oldExchange.getIn() == null || oldExchange.getIn().getBody() == null) {
-			return newExchange;
+	protected Event aggregateEvents(Event oldEvent, Event newEvent) {
+		if (oldEvent instanceof BusinessEvent && newEvent instanceof BusinessEvent) {
+			BusinessEvent oldBE = (BusinessEvent) oldEvent;
+			BusinessEvent newBE = (BusinessEvent) newEvent;
+			double fact = oldBE.getFact() + newBE.getFact();
+			return new GenericEvent(oldBE.getDimension(), fact, timestamp(), oldBE.getType(), oldBE.getDimensionName(), oldBE.getFactName());
+		} else {
+			throw new RuntimeException("Either one or both events are not instance of BusinessEvent.");
 		}
-
-		Event oldEvent = oldExchange.getIn().getBody(Event.class);
-		Event newEvent = newExchange.getIn().getBody(Event.class);
-
-		double fact = oldEvent.getFact() + newEvent.getFact();
-		GenericEvent aggregated = new GenericEvent(oldEvent.getDimension(), fact, timestamp(), oldEvent.getType(), oldEvent.getDimensionName(),
-				oldEvent.getFactName());
-		oldExchange.getIn().setBody(aggregated);
-		return oldExchange;
-	}
-
-	private String timestamp() {
-		return Instant.now().toString();
 	}
 
 }
