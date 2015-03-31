@@ -41,7 +41,7 @@
 	
 		<route>
 			<from ref="aggByDimensionEvents" />
-	   		<log message="Received event: ${body}" logName="rspasov.logger.AggByDimensionLogger" />
+	   		<!-- <log message="Received event: ${body}" logName="rspasov.logger.AggByDimensionLogger" /> -->
 			<to uri="dataset:receiveDataSet" />
 		</route>
 	
@@ -53,7 +53,6 @@
 	            </correlationExpression>
 			<marshal ref="json" />
 			<convertBodyTo type="java.lang.String" />
-	   		<log message="Marshalled event: ${body}" logName="rspasov.logger.TestLogger" />
 			<to ref="websocketEndpoint" />
 	        </aggregate>
 		</route>
