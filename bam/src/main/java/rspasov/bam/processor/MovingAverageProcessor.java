@@ -1,5 +1,8 @@
 package rspasov.bam.processor;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
@@ -9,9 +12,11 @@ import rspasov.bam.event.GenericEvent;
 
 public class MovingAverageProcessor implements Processor {
 
-	private int count;
+	private static final int MAX_COUNT = 20;
 
 	private double average;
+
+	private Queue<Double> queue = new LinkedList<>();
 
 	private GenericEvent averageEvent(BusinessEvent event) {
 		return new GenericEvent(event.getDimension(), average, event.getTimestamp(), event.getType(), event.getDimensionName(),
@@ -30,10 +35,17 @@ public class MovingAverageProcessor implements Processor {
 	}
 
 	private void recalculateAverage(BusinessEvent event) {
-		double sum = count * average;
-		sum += event.getFact();
-		count++;
-		average = sum / count;
-	}
+		double sum = queue.size() * average;
 
+		double oldestValue = 0;
+		if (queue.size() == MAX_COUNT) {
+			oldestValue = queue.poll();
+		}
+		double newestValue = event.getFact();
+		queue.offer(newestValue);
+
+		sum -= oldestValue;
+		sum += newestValue;
+		average = sum / queue.size();
+	}
 }
