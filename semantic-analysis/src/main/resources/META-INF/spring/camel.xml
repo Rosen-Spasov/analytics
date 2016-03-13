@@ -6,17 +6,17 @@
 
 	<bean id="converter" class="events.gateway.Converter" />
 	
-	<bean id="facebookConfiguration" class="org.apache.camel.component.facebook.config.FacebookConfiguration">
+	<!-- <bean id="facebookConfiguration" class="org.apache.camel.component.facebook.config.FacebookConfiguration">
 		<property name="oAuthAppId" value="417078358417235" />
 		<property name="oAuthAppSecret" value="64ff06a98d5b6185a60f77edc48f77d7" />
-	</bean>
+	</bean> -->
 
 	<camelContext id="defaultContext" xmlns="http://camel.apache.org/schema/spring" autoStartup="true">
 
 		<endpoint id="eventsEndpoint" uri="vm:topic:twitterEvents?multipleConsumers=true" />
 		<endpoint id="eventsEndpointOld" uri="vm:topic:twitterEventsOld?multipleConsumers=true" />
 		<endpoint id="twitterEndpoint" uri="twitter://search/tweets?type=polling&amp;delay=5&amp;keywords=#starbucks&amp;accessToken=1388971128-mtMr4MeGxiDqSFIXJeucHTJkGSpIho2OdbzR7ti&amp;accessTokenSecret=beAuEN8mKODjScBAa98ChqpAEYbRUOEj9HCK34gApU6gX&amp;consumerKey=u6L44e32rSntCLYp83wMlhHX8&amp;consumerSecret=P9eZODZYYsHPAnvkuCqa62ffziBABBPfG3PskWSDqFZf5M9ZEo"/>
-		<endpoint id="facebookEndpoint" uri="facebook://home?consumer.delay=5000"/>
+		<!-- <endpoint id="facebookEndpoint" uri="facebook://home?consumer.delay=5000"/> -->
 		<endpoint id="websocketEndpoint" uri="websocket://localhost:8080/cameltwitter?sendToAll=true&amp;staticResources=classpath:web" />
 		<endpoint id="fileEndpoint" uri="file://c:/twitterEvents?noop=true" />
 
@@ -32,17 +32,17 @@
 			<to ref="eventsEndpoint" />
 		</route> -->
 
-		<!-- <route>
+		<route>
 			<from ref="twitterEndpoint" />
 			<process ref="converter" />
 			<marshal ref="json" />
 			<to ref="eventsEndpoint" />
-		</route> -->
+		</route>
 
-		<route>
+		<!-- <route>
 			<from ref="facebookEndpoint" />
 			<to ref="eventsEndpoint" />
-		</route>
+		</route> -->
 
 		<route>
 			<from ref="eventsEndpoint" />
