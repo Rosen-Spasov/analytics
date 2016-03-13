@@ -1,4 +1,4 @@
-package rspasov.core;
+package rspasov.application;
 
 import org.apache.camel.spring.Main;
 

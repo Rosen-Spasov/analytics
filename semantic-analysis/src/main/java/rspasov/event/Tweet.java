@@ -1,4 +1,4 @@
-package events;
+package rspasov.event;
 
 public class Tweet {
     private String name;

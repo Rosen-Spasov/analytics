@@ -1,4 +1,4 @@
-package events.gateway;
+package rspasov.event;
 
 import java.io.File;
 import java.util.Calendar;
@@ -16,8 +16,6 @@ import twitter4j.Status;
 import com.aliasi.classify.JointClassification;
 import com.aliasi.classify.LMClassifier;
 import com.aliasi.util.AbstractExternalizable;
-
-import events.Tweet;
 
 @SuppressWarnings("rawtypes")
 public class Converter implements Processor {
